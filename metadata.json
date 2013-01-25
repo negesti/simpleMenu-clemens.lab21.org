@@ -1,0 +1,8 @@
+{
+  "shell-version": ["3.6"],
+  "name": "Simple Menu",
+  "description": "Hide panel buttons, a simple menu, hide top bar, ...",
+  "url": "https://github.com/negesti/simpleMenu",
+  "uuid": "simpleMenu@clemens.lab21.org",
+    "settings-schema": "org.gnome.shell.extensions.org-lab21-simpleMenu"
+}
