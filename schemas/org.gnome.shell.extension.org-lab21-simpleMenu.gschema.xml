@@ -20,5 +20,21 @@
       <default><![CDATA[['center']]]></default>
       <summary>The position of the SimpleMenu in to top panel</summary>
     </key>
+    <key type="i" name="hide-top-bar">
+      <default>0</default>
+      <summary>Hide the Gnome-shell top bar</summary>
+    </key>
+    <key type="i" name="hide-top-time-delta">
+      <default>1000</default>
+      <summary>Pin top panel double click timeout</summary>
+    </key>
+    <key type="i" name="hide-top-show-delay">
+      <default>300</default>
+      <summary>Time in ms to wait until top panel is shown on mouseover</summary>
+    </key>
+    <key type="i" name="hide-top-animation-time">
+      <default>4</default>
+      <summary>Duration of the show/hide animation</summary>
+    </key>
   </schema>
 </schemalist>

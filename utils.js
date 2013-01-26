@@ -20,6 +20,11 @@ Utils.prototype = {
 
   BUTTON_POSITION: 'button-position',
 
+  HIDE_TOP_BAR: 'hide-top-bar',
+  HIDE_TOP_TIME_DELTA: 'hide-top-time-delta',
+  HIDE_TOP_SHOW_DELAY: 'hide-top-show-delay',
+  HIDE_TOP_ANIMATION_TIME: 'hide-top-animation-time',
+
   _init: function() {
     this._loadSettings();
   },
