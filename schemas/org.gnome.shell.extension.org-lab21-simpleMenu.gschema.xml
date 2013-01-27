@@ -1,21 +1,28 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.org-lab21-simpleMenu" path="/org/gnome/shell/extensions/org-lab21-simpleMenu/">
+    <!-- hide panel icons -->
     <key type="i" name="hide-a11y">
-      <default>1</default>
+      <default>0</default>
       <summary>Hide the A11y icon</summary>
     </key>
     <key type="i" name="hide-volume">
-      <default>1</default>
+      <default>0</default>
       <summary>Hide the volume icon</summary>
     </key>
     <key type="i" name="hide-bluetooth">
-      <default>1</default>
+      <default>0</default>
       <summary>Hide the bluetooth icon</summary>
     </key>
+    <!-- global settings -->
     <key type="i" name="enable-dev-tools">
       <default>0</default>
       <summary>Enable development tools (lg, r,..)</summary>
     </key>
+    <key type="i" name="disable-animation">
+      <default>0</default>
+      <summary>Disable shell animations</summary>
+    </key>
+    <!-- Hide top bar -->
     <key type="as" name="button-position">
       <default><![CDATA[['center']]]></default>
       <summary>The position of the SimpleMenu in to top panel</summary>
@@ -35,6 +42,19 @@
     <key type="i" name="hide-top-animation-time">
       <default>4</default>
       <summary>Duration of the show/hide animation</summary>
+    </key>
+    <!-- menu configuration --> 
+    <key type="s" name="simple-menu-entry">
+      <default>"{}"</default>
+      <summary>SimpleMenu entries</summary>
+    </key>
+    <key type="s" name="simple-menu-position">
+      <default>"center"</default>
+      <summary>SimpleMenu position</summary>
+    </key>
+    <key type="as" name="simple-menu-key-binding">
+      <default><![CDATA[['<alt>F1']]]></default>
+      <summary>SimpleMenu keybinding</summary>
     </key>
   </schema>
 </schemalist>

@@ -25,18 +25,14 @@ SimpleMenu.prototype = {
       animationTime: Utils.getNumber(Utils.HIDE_TOP_ANIMATION_TIME, 4)
     });
 
-    var buttonPosition = Utils.getParameter(Utils.BUTTON_POSITION);
-    // TODO create a SimpleMenuButton.js and let it handel all this
-    // check  which positions addToStatusArea supports
-    if (buttonPosition == "center") {
-      Main.panel.addToStatusArea("SimpleMenu", this._myPanelButton, 1, "center");
-    } else if (buttonPosition == "right") {
-      Main.panel.addToStatusArea("SimpleMenu", this._myPanelButton);
-    }
+    var buttonPosition = Utils.getString(Utils.SIMPLE_MENU_POSITION, "center");
+    //Main.panel.addToStatusArea("SimpleMenu", this._myPanelButton, 0, buttonPosition);
 
     // TODO make this a custom keybinding
-    Meta.keybindings_set_custom_handler(
-      "move-to-workspace-1",
+    global.display.add_keybinding(
+      Utils.SIMPLE_MENU_KEY_BINDING,
+      Utils.getSettingsObject(),
+      Meta.KeyBindingFlags.NONE,
       Lang.bind(this, function(){
         this._myPanelButton.menu.toggle();
         this._myPanelButton.focusFirstElement();
@@ -53,6 +49,13 @@ SimpleMenu.prototype = {
 
     if(Utils.getBoolean(Utils.HIDE_VOLUME)) {
       this._toggleSymbol("volume", true);
+    }
+
+    this._oldShouldAnimate = Main.wm._shouldAnimate;
+    if (Utils.getBoolean(Utils.DISABLE_ANIMATION, false)) {
+      Main.wm._shouldAnimate = function(actor) {
+        return false;
+      }
     }
 
     this._addSettingsListeners();
@@ -80,6 +83,19 @@ SimpleMenu.prototype = {
           global.settings.set_boolean('development-tools', Utils.getBoolean(Utils.DEV_TOOLS));
         })
     }];
+
+    this._settingsChangedListeners.push({
+      name: Utils.DISABLE_ANIMATION,
+      fn: Lang.bind(this, function() {
+        if (Utils.getBoolean(Utils.DISABLE_ANIMATION, false)) {
+          Main.wm._shouldAnimate = function(actor) {
+            return false;
+          }
+        } else {
+          Main.wm._shouldAnimate = this._oldShouldAnimate;
+        }
+      })
+    });
 
     // listeners for the auto hide top bar stuff;
     this._settingsChangedListeners.push({
@@ -136,10 +152,10 @@ SimpleMenu.prototype = {
           symbol.actor.show();
         }
       } else {
-        global.log("Error symbol: Can not resolve symbol by name " + name );
+        global.log("Error: Can not resolve symbol by name " + name );
       }
     } catch(e) {
-      global.log("error hidding " + name +"  " +e.Message);
+      global.log("Error hidding " + name +"  " +e.Message);
     }
   },
 
@@ -147,6 +163,9 @@ SimpleMenu.prototype = {
     for (let i=0; i < this._settingsChangedListeners.length; i++) {
       Utils.getSettingsObject().disconnect(this._settingsChangedListeners[i].handlerId);
     }
+
+    global.display.remove_keybinding(Utils.SIMPLE_MENU_KEY_BINDING);
+
 
     this._hideTopBar.disable();
   } // destroy

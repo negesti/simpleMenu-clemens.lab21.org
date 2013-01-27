@@ -17,13 +17,16 @@ Utils.prototype = {
   HIDE_VOLUME: "hide-volume",
   HIDE_BLUETOOTH: "hide-bluetooth",
   DEV_TOOLS: 'enable-dev-tools',
-
-  BUTTON_POSITION: 'button-position',
+  DISABLE_ANIMATION: 'disable-animation',
 
   HIDE_TOP_BAR: 'hide-top-bar',
   HIDE_TOP_TIME_DELTA: 'hide-top-time-delta',
   HIDE_TOP_SHOW_DELAY: 'hide-top-show-delay',
   HIDE_TOP_ANIMATION_TIME: 'hide-top-animation-time',
+
+  SIMPLE_MENU_POSITION: 'simple-menu-position',
+  SIMPLE_MENU_KEY_BINDING: 'simple-menu-key-binding',
+  SIMPLE_MENU_ENTRY: 'simple-menu-entry',
 
   _init: function() {
     this._loadSettings();
@@ -34,6 +37,20 @@ Utils.prototype = {
 
   getSettingsObject: function() {
     return this._settingsObject;
+  },
+
+  saveSettings: function() {
+    let saveMe = {};
+
+    let entries = this._settings["simple-menu-entry"];
+
+    let names = Object.getOwnPropertyNames(entries);
+    names.sort();
+    for (let i=0; i<names.length; i++) {
+      saveMe[entries[names[i]].display] = entries[names[i]];
+    }
+
+    this._settingsObject.set_string(this.SIMPLE_MENU_ENTRY, JSON.stringify(saveMe));
   },
 
   _loadSettings: function() {
@@ -59,17 +76,18 @@ Utils.prototype = {
 
     // load dev tools enabled from global settings
 
+    let devEnabled = false;
     if (global.settings) {
-      this.setParameter(this.DEV_TOOLS, global.settings.get_boolean('development-tools'));
+      devEnabled = global.settings.get_boolean('development-tools');
     } else {
-      this.setParameter(this.DEV_TOOLS, new Gio.Settings({ schema: "org.gnome.shell" }).get_boolean('development-tools'));
+      devEnabled = new Gio.Settings({ schema: "org.gnome.shell" }).get_boolean('development-tools');
     }
-  },
+    if (this.getBoolean(this.DEV_TOOLS) != devEnabled) {
+      this.setParameter(this.DEV_TOOLS, devEnabled);
+    }
 
-  saveSettings: function() {
-    try {
-    } catch (e) {
-      this.showErrorMessage("Error saving settings ", e);
+    this._settings = {
+      "simple-menu-entry": JSON.parse(this._settingsObject.get_string("simple-menu-entry"))
     }
   },
 
@@ -81,44 +99,45 @@ Utils.prototype = {
   },
 
   getBoolean: function(name, defaultValue) {
-    let ret = defaultValue;
-    if (name.indexOf("locations") == -1) {
-      ret = this._settingsObject.get_int(name);
-    } else {
-      ret = this.getParameter(name);
+    let ret = this._settingsObject.get_int(name);
+    if (typeof ret == "undefined") {
+      return defaultValue;
     }
     return ret == "true" || ret == "1";
   },
 
   getNumber: function(name, defaultValue) {
-    if (name.indexOf("locations") == -1) {
-      return this._settingsObject.get_int(name);
+    let ret = this._settingsObject.get_int(name);
+    if (typeof ret == "undefined") {
+      return defaultValue;
     }
-
-    return this._toNumber(this.getParameter(name, defaultValue), defaultValue);
+    return ret;
   },
 
   get_strv: function(name) {
     return this._settingsObject.get_strv(name);
   },
 
-  set_strv: function(name, value) {
-    this._settingsObject.set_strv(name, value);
+  getString: function(name, defaultValue) {
+    let ret = this._settingsObject.get_string(name);
+    if (typeof ret == "undefined") {
+      return defaultValue;
+    }
+    return ret;
   },
 
   getParameter: function(name, defaultValue) {
     try {
       let path = name.split("."),
-      value = this._settings[path[0]],
-      pathLength = path.length;
-
+        value = this._settings[path[0]],
+        pathLength = path.length;
       for (let i=1; i < pathLength; i++) {
-          value = value[path[i]];
+        value = value[path[i]];
       }
 
       return value;
     } catch (e) {
-      this.showErrorMessage("Error getting parameter!", "Can not get config by name " + name + " defaulting to " + defaultValue + "'" + e.message);
+      this.showErrorMessage("Error getting parameter!", "Can not get config by name '" + name + "' defaulting to '" + defaultValue + "' " + e.message);
       return defaultValue;
     }
   },
@@ -143,12 +162,13 @@ Utils.prototype = {
 
   setParameter: function(name, value) {
     try {
-      if (name.indexOf("locations") == -1) {
+      if (name.indexOf(this.SIMPLE_MENU_ENTRY) == -1) {
         if (isNaN(value)) {
           this._settingsObject.set_string(name, value);
         } else {
           this._settingsObject.set_int(name, value);
         }
+        return;
       }
 
       let path = name.split("."),
@@ -163,7 +183,6 @@ Utils.prototype = {
       }
 
       conf[ path[pathLength] ] = value;
-
     } catch (e) {
       this.showErrorMessage("Error setting parameter!", "Can not set config parameter " + name + " " + e.message);
     }
@@ -183,5 +202,10 @@ Utils.prototype = {
     return !isNaN(value)
       ? new Number(value)
       : defaultValue;
+  },
+
+  showErrorMessage: function(title, text) {
+    global.log("ERROR Title: " + title);
+    global.log("ERROR Text: " + text);
   }
 };

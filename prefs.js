@@ -6,6 +6,7 @@ const Lang = imports.lang;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Utils = new Me.imports.utils.Utils();
+const MenuConfigWidget = Me.imports.menuConfigWidget;
 
 const SimpleMenuSettingsWidget = new GObject.Class({
   Name: 'SimpleMenu.Prefs.SimpleMenuSettingsWidget',
@@ -24,12 +25,15 @@ const SimpleMenuSettingsWidget = new GObject.Class({
     row++;
     this.attach(this._generateAutohideSettings(), 0, row, 1, 1);
     row++;
-
+    this.attach(new Gtk.Separator( { orientation: Gtk.Orientation.HORIZONTAL } ), 0, row, 1, 1);
+    row++;
+    this.attach(new MenuConfigWidget.MenuConfigWidget(), 0, row, 1, 1);
+    row++;
   },
 
-  _addLabeledSwitch: function(container, row, label, settingsName, labelWidth, buttonWidth) {
+  _addLabeledSwitch: function(container, row, label, settingsName, labelWidth , buttonWidth) {
     if (!labelWidth) {
-      labelWidth = 4;
+      labelWidth = 3;
     }
     if (!buttonWidth) {
       buttonWidth = 1;
@@ -56,6 +60,8 @@ const SimpleMenuSettingsWidget = new GObject.Class({
     let row = 0;
     this._addLabeledSwitch(grid, row, "Enable development tools (LoogkinGlass, shell reload..)", Utils.DEV_TOOLS);
     row++;
+    this._addLabeledSwitch(grid, row, "Disable animation", Utils.DISABLE_ANIMATION);
+    row++;
     this._addLabeledSwitch(grid, row, "Hide Bluetooth  icon", Utils.HIDE_BLUETOOTH);
     row++;
     this._addLabeledSwitch(grid, row, "Hide Volume icon", Utils.HIDE_VOLUME);
@@ -73,7 +79,7 @@ const SimpleMenuSettingsWidget = new GObject.Class({
   _generateAutohideSettings: function() {
     let grid = new Gtk.Grid({margin_left: 20, column_homogeneous: true, })
     let row = 0;
-    this._addLabeledSwitch(grid, row, "Auto hide top bar", Utils.HIDE_TOP_BAR);
+    this._addLabeledSwitch(grid, row, "Auto hide top bar", Utils.HIDE_TOP_BAR, 4, 1);
     row++;
 
     grid.attach( new Gtk.Label({
