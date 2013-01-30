@@ -196,12 +196,20 @@ HideTopBar.prototype = {
     this._pinIt(true);
 
     for (let i=0; i < this._mainPanelSignals.length; i++) {
-      Main.panel.actor.disconnect(this._mainPanelSignals[i]);
+      try {
+        Main.panel.actor.disconnect(this._mainPanelSignals[i]);
+      } catch (e) {
+        global.log("Error disconnecting signal from Main.panel.actor");
+      }
     }
     this._mainPanelSignals = [];
 
     for (let i=0; i < this._overviewSignals.length; i++) {
-      Main.overview.disconnect(this._overviewSignals[i]);
+      try {
+        Main.overview.disconnect(this._overviewSignals[i]);
+      } catch (e) {
+        global.log("Error disconnecting signal from Main.overview");
+      }
     }
     this._overviewSignals = [];
     this._showPanel();
