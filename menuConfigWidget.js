@@ -7,13 +7,12 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Utils = new Me.imports.utils.Utils();
 
-
 const MenuConfigWidget = new GObject.Class({
   Name: 'SimpleMenu.Prefs.MenuConfigWidget',
   GTypeName: 'SimpleMenuMenuConfigWidget',
   Extends: Gtk.Expander,
 
-  _menuEntries: [],
+  _menuConfig: {},
   _entries: [],
   _selectedEntry: null,
 
@@ -23,8 +22,6 @@ const MenuConfigWidget = new GObject.Class({
     this.set_use_markup(true);
 
     this._menuConfig = Utils.getParameter(Utils.SIMPLE_MENU_ENTRY);
-    this._menuEntries = Object.getOwnPropertyNames(this._menuConfig);
-    this._menuEntries.sort();
 
     let grid = new Gtk.Grid({margin_left: 20, margin_right: 5, column_homogeneous: true, })
 
@@ -40,7 +37,7 @@ const MenuConfigWidget = new GObject.Class({
       label: "PanelButton position",
     }), 0, row, 2, 1);
 
-    let cb = this._getComboBox([GObject.TYPE_STRING], [["left"], ["center"], ["right"]], Utils.getString(Utils.SIMPLE_MENU_POSITION, "center"));
+    let cb = this._getComboBox([GObject.TYPE_STRING], [["left"], ["center left"], ["center right"], ["right"]], Utils.getString(Utils.SIMPLE_MENU_POSITION, "right"));
     cb.connect('changed',
       Lang.bind(this, function(combo) {
         let [success,iter]  = combo.get_active_iter();
@@ -50,8 +47,22 @@ const MenuConfigWidget = new GObject.Class({
         Utils.setParameter(Utils.SIMPLE_MENU_POSITION, combo.get_model().get_value(iter, 0));
       })
     );
-
     grid.attach(cb, 3, row, 2, 1);
+    row++;
+
+    // terminal to execute
+    grid.attach(new Gtk.Label({
+      halign: Gtk.Align.START,
+      label: "Terminal command",
+    }), 0, row, 2, 1);
+
+    let terminalName = new Gtk.Entry({ text: Utils.getString(Utils.SIMPLE_MENU_TERMINAL, "gnome-terminal" ) });
+    terminalName.connect("changed",
+      Lang.bind(this, function(input) {
+        Utils.setParameter(Utils.SIMPLE_MENU_TERMINAL, input.text);
+      })
+    );
+    grid.attach(terminalName, 3, row, 2, 1);
     row++;
 
     // menu entries
@@ -182,8 +193,22 @@ const MenuConfigWidget = new GObject.Class({
       })
     );
 
-    for(let i=0; i < this._menuEntries.length; i++) {
-      this._addEntry(this._menuEntries[i]);
+
+    // sort the menu entries by position
+    var entries = Object.getOwnPropertyNames(this._menuConfig);
+    let size = entries.length;
+
+    // sort entries by _menuconfig.foobar.position
+    for (let i=0; i < size; i++) {
+      entries[i] = {
+        name: entries[i],
+        position: this._menuConfig[entries[i]].position
+      };
+    }
+    entries.sort(Utils.sortMenuEntries);
+
+    for(let i=0; i < entries.length; i++) {
+      this._addEntry(entries[i].name);
     }
 
     // toolbar to add/remove entries
@@ -237,6 +262,7 @@ const MenuConfigWidget = new GObject.Class({
         let obj = this._addEntry( "Entry " + this._entries.length);
         this._selectedEntry = obj.name
         treeView.get_selection().select_iter(obj.listElement);
+        this._updateEntryContainer(this._createEntryWidget(this._selectedEntry))
       })
     );
 
@@ -293,7 +319,7 @@ const MenuConfigWidget = new GObject.Class({
     let config = Utils.getParameter(configBase);
 
     if (typeof config == "undefined") {
-      config = {display: name, command: "", terminal: false};
+      config = {display: name, command: "", terminal: false, position: 1};
     } else {
       if (!config.display) {
         config.display = name;
@@ -304,16 +330,20 @@ const MenuConfigWidget = new GObject.Class({
       if (typeof config.terminal == "undefined") {
         config.terminal = false;
       }
+      if (typeof config.position == "undefined") {
+        config.position = 1;
+      }
     }
 
 
-    let grid = new Gtk.Grid({ column_homogeneous: true});
+    let grid = new Gtk.Grid({ column_homogeneous: true, margin: 5});
     let row = 0;
     grid.attach(new Gtk.Label({ label: "Display name", xalign: 0}), 0, row, 1, 1);
     let displayEntry = new Gtk.Entry({ text: config.display });
     displayEntry.connect("changed", Lang.bind(this, function(input) {
       Utils.setParameter(configBase + ".display", input.text);
-      this._treeModel.set(this._findListEntryByName(this._selectedEntry), [0], [ input.text ]);
+      let entry = this._findListEntryByName(this._selectedEntry);
+      this._treeModel.set(entry.listElement, [0], [ input.text ]);
     }));
     grid.attach(displayEntry, 2, row, 2, 1);
     row++;
@@ -324,6 +354,16 @@ const MenuConfigWidget = new GObject.Class({
       Utils.setParameter(configBase + ".command", input.text);
     }));
     grid.attach(commandEntry, 2, row, 2, 1);
+    row++;
+
+    // position inside the created menu
+    grid.attach(new Gtk.Label({ label: "Position", xalign: 0}), 0, row, 1, 1);
+    let position = new Gtk.HScale.new_with_range( 1, 20, 1 );
+    position.set_value(Utils.getParameter(configBase + ".position", 1));
+    position.connect("value_changed", Lang.bind(position, function() {
+      Utils.setParameter(configBase + ".position", this.get_value());
+    }));
+    grid.attach(position, 2, row, 2, 1);
     row++;
 
     grid.attach(new Gtk.Label({ label: "Run in terminal", xalign: 0}), 0, row, 1, 1);

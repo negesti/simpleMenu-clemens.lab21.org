@@ -25,6 +25,7 @@ Utils.prototype = {
   HIDE_TOP_ANIMATION_TIME: 'hide-top-animation-time',
 
   SIMPLE_MENU_POSITION: 'simple-menu-position',
+  SIMPLE_MENU_TERMINAL: 'simple-menu-terminal',
   SIMPLE_MENU_KEY_BINDING: 'simple-menu-key-binding',
   SIMPLE_MENU_ENTRY: 'simple-menu-entry',
 
@@ -202,6 +203,21 @@ Utils.prototype = {
     return !isNaN(value)
       ? new Number(value)
       : defaultValue;
+  },
+
+  sortMenuEntries: function(a, b) {
+    let ret = a.position - b.position;
+    if (ret != 0) {
+      return ret;
+    }
+
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return -1;
+    }
+    return 0;
   },
 
   showErrorMessage: function(title, text) {

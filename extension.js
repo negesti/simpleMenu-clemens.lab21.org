@@ -6,6 +6,7 @@ const Meta = imports.gi.Meta;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const HideTopBar = Me.imports.hideTopBar;
+const SimpleMenuPanelButton = Me.imports.simpleMenuPanelButton;
 
 const Utils = new Me.imports.utils.Utils();
 
@@ -26,9 +27,25 @@ SimpleMenu.prototype = {
     });
 
     var buttonPosition = Utils.getString(Utils.SIMPLE_MENU_POSITION, "center");
-    //Main.panel.addToStatusArea("SimpleMenu", this._myPanelButton, 0, buttonPosition);
 
-    // TODO make this a custom keybinding
+    this._myPanelButton = new SimpleMenuPanelButton.SimpleMenuPanelButton({
+      config : Utils.getParameter(Utils.SIMPLE_MENU_ENTRY, {}),
+      terminal : Utils.getString(Utils.SIMPLE_MENU_TERMINAL, "gnome-terminal")
+    });
+
+    // index inside the left/center/right box. 0 == left, 100 == right
+    let position = 100;
+    if (buttonPosition == "left") {
+      position = 100;
+    } else if (buttonPosition == "center left") {
+      position = 0;
+    }  else if (buttonPosition == "center right") {
+      position = 100;
+    } else if (buttonPosition == "right") {
+      position = 0;
+    }
+    Main.panel.addToStatusArea("SimpleMenu", this._myPanelButton, position, buttonPosition);
+
     global.display.add_keybinding(
       Utils.SIMPLE_MENU_KEY_BINDING,
       Utils.getSettingsObject(),
@@ -161,7 +178,11 @@ SimpleMenu.prototype = {
 
   destroy: function() {
     for (let i=0; i < this._settingsChangedListeners.length; i++) {
-      Utils.getSettingsObject().disconnect(this._settingsChangedListeners[i].handlerId);
+      try {
+        Utils.getSettingsObject().disconnect(this._settingsChangedListeners[i].handlerId);
+      } catch (e) {
+        global.log("Error disconnecting signal for " + this._settingsChangesListeners[i].name);
+      }
     }
 
     global.display.remove_keybinding(Utils.SIMPLE_MENU_KEY_BINDING);
