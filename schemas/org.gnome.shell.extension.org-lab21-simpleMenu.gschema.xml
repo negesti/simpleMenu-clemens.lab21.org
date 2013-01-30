@@ -43,7 +43,7 @@
       <default>4</default>
       <summary>Duration of the show/hide animation</summary>
     </key>
-    <!-- menu configuration --> 
+    <!-- menu configuration -->
     <key type="s" name="simple-menu-terminal">
       <default>"gnome-terminal"</default>
       <summary>Terminal emulator to use for menu entries</summary>
