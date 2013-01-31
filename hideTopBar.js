@@ -17,7 +17,7 @@ function HideTopBar(params) {
 HideTopBar.prototype = {
   // the position searchEntry inside the overview can changed
   _overviewMoved: false,
-  _originalSearEntryPosition : null,
+  _originalSearchEntryPosition : null,
   // height of the top bar, required for animations
   _height: 25,
 
@@ -109,11 +109,12 @@ HideTopBar.prototype = {
 
     this._hidden = false;
     if (!this._overviewMoved && Main.overview.visible) {
+      if (this._originalSearchEntryPosition == null) {
+        let pos = Main.overview._searchEntry.get_position();
+        this._originalSearchEntryPosition = pos;
+      }
       this._overviewMoved = true;
-      let pos = Main.overview._searchEntry.get_position();
-      this._originalSearEntryPosition = pos;
-      Main.overview._searchEntry.set_position(pos[0], pos[1] + 27);
-      //  Main.overview._relayout();
+      Main.overview._searchEntry.set_position(this._originalSearchEntryPosition[0], this._originalSearchEntryPosition[1] + 27);
     }
   },//_showPanel
 
@@ -180,6 +181,9 @@ HideTopBar.prototype = {
     this._panelHideable = true;
     this._pinIt(false);
 
+    this._mainPanelSignals = [];
+    this._overviewSignals = [];
+
     this._mainPanelSignals.push(Main.panel.actor.connect('leave-event', Lang.bind(this, this._hideDelayed)));
     this._mainPanelSignals.push(Main.panel.actor.connect('enter-event', Lang.bind(this, this._showDelayed)));
     this._mainPanelSignals.push(Main.panel.actor.connect('button-release-event', Lang.bind(this, this._toggleHideable)));
@@ -191,9 +195,14 @@ HideTopBar.prototype = {
   },
 
   disable: function() {
-
+    this._showPanel();
     this._panelHideable = false;
     this._pinIt(true);
+
+    if (this._originalSearchEntryPosition != null) {
+      Main.overview._searchEntry.set_position(this._originalSearchEntryPosition[0], this._originalSearchEntryPosition[1]);
+    }
+
 
     for (let i=0; i < this._mainPanelSignals.length; i++) {
       try {
@@ -212,7 +221,6 @@ HideTopBar.prototype = {
       }
     }
     this._overviewSignals = [];
-    this._showPanel();
   }
 };
 

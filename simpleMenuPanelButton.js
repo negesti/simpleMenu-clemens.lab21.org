@@ -4,6 +4,7 @@ const Util = imports.misc.util;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 
 const Lang = imports.lang;
@@ -26,22 +27,35 @@ const SimpleMenuPanelButton = new Lang.Class({
       this._terminal = config.terminal;
 
       this.parent(0.25, "SimpleMenu", false);
-      PanelMenu.Button.prototype._init.call(this, 0.0);
-      var params = {
+      var iconParams = {
         icon_name: 'system-file-manager-symbolic',
         style_class: 'system-status-icon'
       };
       if (St.IconType) {
-        params.icon_type = St.IconType.SYMBOLIC
+        iconParams.icon_type = St.IconType.SYMBOLIC
       }
-      let icon = new St.Icon(params);
-
-      this.actor.add_actor(icon);
+      this._icon = new St.Icon(iconParams);
+      this.actor.add_actor(this._icon);
 
       this._dynamicMenu = this._createEntries()
       this.menu.addMenuItem(this._dynamicMenu);
 
+      let sep = new PopupMenu.PopupSeparatorMenuItem()
+      this.menu.addMenuItem(sep);
+
+      // add link to settings dialog
+      // Thanks to https://github.com/philipphoffmann/gnome3-jenkins-indicator
+      let settingsItem  = new PopupMenu.PopupMenuItem(_("Settings"));
+      settingsItem.connect("activate", function(){
+        let app = Shell.AppSystem.get_default().lookup_app("gnome-shell-extension-prefs.desktop");
+        if( app!=null ) {
+          app.launch(global.display.get_current_time_roundtrip(), ['extension:///' + Me.uuid], -1, null);
+        }
+      });
+      this.menu.addMenuItem(settingsItem);
+
       Main.panel.menuManager.addMenu(this.menu);
+
     }catch (err) {
       global.log("Error creating SimpleMenu: " + err);
       Main.notifyError("Error creating menuitems", err.message);
@@ -111,7 +125,5 @@ const SimpleMenuPanelButton = new Lang.Class({
 
   focusFirstElement: function() {
     this.first.setActive(true);
-  },
-
-  _onDestroy: function() {}
+  }
 });

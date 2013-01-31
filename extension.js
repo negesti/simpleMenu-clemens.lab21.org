@@ -2,6 +2,7 @@
 const Lang = imports.lang;
 const Main = imports.ui.main;
 const Meta = imports.gi.Meta;
+const Overview = imports.ui.overview;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -23,7 +24,7 @@ SimpleMenu.prototype = {
       enabled: Utils.getBoolean(Utils.HIDE_TOP_BAR),
       timeDelta: Utils.getNumber(Utils.HIDE_TOP_TIME_DELTA, 1000),
       showDelay: Utils.getNumber(Utils.HIDE_TOP_SHOW_DELAY, 300),
-      animationTime: Utils.getNumber(Utils.HIDE_TOP_ANIMATION_TIME, 4)
+      animationTime: Utils.getNumber(Utils.HIDE_TOP_ANIMATION_TIME, Overview.Overview.ANIMATION_TIME * 10)
     });
 
     var buttonPosition = Utils.getString(Utils.SIMPLE_MENU_POSITION, "center");
@@ -186,7 +187,7 @@ SimpleMenu.prototype = {
     }
 
     global.display.remove_keybinding(Utils.SIMPLE_MENU_KEY_BINDING);
-
+    this._myPanelButton.destroy();
 
     this._hideTopBar.disable();
   } // destroy
