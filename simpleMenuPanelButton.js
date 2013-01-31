@@ -104,12 +104,21 @@ const SimpleMenuPanelButton = new Lang.Class({
     if (terminal == true) {
       Util.spawnCommandLine(this._terminal +" "+ command);
     } else {
+      Util.spawnCommandLine(command);
+/*      global.log(command);
+      Main.notify(command);
+      Main.notify( (typeof command) );
       if (command instanceof Array) {
         Util.spawn(command);
       } else {
-        Util.spawn([command]);
+        if (command instanceof String && command.indexof(" ") != -1) {
+          command = command.split(" ");
+          global.log(command);
+        }
+        Util.spawn(command);
+        
       }
-
+  */
     }
   },
 
