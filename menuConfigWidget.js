@@ -359,7 +359,7 @@ const MenuConfigWidget = new GObject.Class({
     // position inside the created menu
     grid.attach(new Gtk.Label({ label: "Position", xalign: 0}), 0, row, 1, 1);
     let position = new Gtk.HScale.new_with_range( 1, 20, 1 );
-    position.set_value(Utils.getParameter(configBase + ".position", 1));
+    position.set_value(config.position);
     position.connect("value_changed", Lang.bind(position, function() {
       Utils.setParameter(configBase + ".position", this.get_value());
     }));
