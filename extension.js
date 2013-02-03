@@ -17,6 +17,7 @@ function SimpleMenu() {
 
 SimpleMenu.prototype = {
   _settingsChangedListeners: [],
+  _originalSyncVisibility: null,
 
   _init: function() {
 
@@ -156,7 +157,7 @@ SimpleMenu.prototype = {
   }, // _addSettingsListeners
 
   _toggleSymbol: function(name, hide) {
-    try{
+    try {
       var symbol = null;
       if (Main.panel.statusArea) {
         symbol = Main.panel.statusArea[name];
@@ -169,12 +170,34 @@ SimpleMenu.prototype = {
         } else {
           symbol.actor.show();
         }
+        if (name == "volume" ) {
+          this._toggleVolumeButton(symbol, hide);
+        }
+
       } else {
         global.log("Error: Can not resolve symbol by name " + name );
       }
     } catch(e) {
-      global.log("Error hidding " + name +"  " +e.Message);
+      global.log("Error hidding " + name +"  " +e+ " " + " "  +e.Message);
     }
+  },
+
+  _toggleVolumeButton: function(symbol, hide) {
+    if (this._originalSyncVisibility == null) {
+      this._originalSyncVisibility = symbol._syncVisibility;
+    }
+
+    if (hide) {
+      symbol._syncVisibility = function() {
+        return;
+      }
+      symbol.actor.hide();
+    } else {
+      symbol._syncVisibility = this._originalSyncVisibility;
+      symbol.actor.show();
+    }
+
+
   },
 
   destroy: function() {
