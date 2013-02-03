@@ -45,14 +45,14 @@ const SimpleMenuPanelButton = new Lang.Class({
 
       // add link to settings dialog
       // Thanks to https://github.com/philipphoffmann/gnome3-jenkins-indicator
-      let settingsItem  = new PopupMenu.PopupMenuItem(_("Settings"));
-      settingsItem.connect("activate", function(){
+      this._settingsItem  = new PopupMenu.PopupMenuItem(_("Settings"));
+      this._settingsItem.connect("activate", function(){
         let app = Shell.AppSystem.get_default().lookup_app("gnome-shell-extension-prefs.desktop");
         if( app!=null ) {
           app.launch(global.display.get_current_time_roundtrip(), ['extension:///' + Me.uuid], -1, null);
         }
       });
-      this.menu.addMenuItem(settingsItem);
+      this.menu.addMenuItem(this._settingsItem);
 
       Main.panel.menuManager.addMenu(this.menu);
 
@@ -133,6 +133,10 @@ const SimpleMenuPanelButton = new Lang.Class({
   },
 
   focusFirstElement: function() {
-    this.first.setActive(true);
+    if (this.first) {
+      this.first.setActive(true);
+    } else {
+      this._settingsItem.setActive(true);
+    }
   }
 });
