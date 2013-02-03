@@ -32,11 +32,11 @@
       <summary>Hide the Gnome-shell top bar</summary>
     </key>
     <key type="i" name="hide-top-time-delta">
-      <default>1000</default>
+      <default>1</default>
       <summary>Pin top panel double click timeout</summary>
     </key>
     <key type="i" name="hide-top-show-delay">
-      <default>300</default>
+      <default>3</default>
       <summary>Time in ms to wait until top panel is shown on mouseover</summary>
     </key>
     <key type="i" name="hide-top-animation-time">
