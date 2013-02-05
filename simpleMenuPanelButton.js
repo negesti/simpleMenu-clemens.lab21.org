@@ -1,3 +1,8 @@
+/*jshint indent: 2*/
+/*jshint camelcase: true*/
+/*jshint immed: true*/
+/*jshint curly: true*/
+
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 const Util = imports.misc.util;
@@ -32,15 +37,15 @@ const SimpleMenuPanelButton = new Lang.Class({
         style_class: 'system-status-icon'
       };
       if (St.IconType) {
-        iconParams.icon_type = St.IconType.SYMBOLIC
+        iconParams.icon_type = St.IconType.SYMBOLIC;
       }
       this._icon = new St.Icon(iconParams);
       this.actor.add_actor(this._icon);
 
-      this._dynamicMenu = this._createEntries()
+      this._dynamicMenu = this._createEntries();
       this.menu.addMenuItem(this._dynamicMenu);
 
-      let sep = new PopupMenu.PopupSeparatorMenuItem()
+      let sep = new PopupMenu.PopupSeparatorMenuItem();
       this.menu.addMenuItem(sep);
 
       // add link to settings dialog
@@ -48,7 +53,7 @@ const SimpleMenuPanelButton = new Lang.Class({
       this._settingsItem  = new PopupMenu.PopupMenuItem(_("Settings"));
       this._settingsItem.connect("activate", function(){
         let app = Shell.AppSystem.get_default().lookup_app("gnome-shell-extension-prefs.desktop");
-        if( app!=null ) {
+        if ( app!==null ) {
           app.launch(global.display.get_current_time_roundtrip(), ['extension:///' + Me.uuid], -1, null);
         }
       });
@@ -64,7 +69,7 @@ const SimpleMenuPanelButton = new Lang.Class({
 
   // create the dynamic menu entries defined in simpleMenu.json
   _createEntries: function() {
-    let section = new PopupMenu.PopupMenuSection()
+    let section = new PopupMenu.PopupMenuSection();
 
     var entries = Object.getOwnPropertyNames(this._menuConfig);
     let size = entries.length;
@@ -77,13 +82,13 @@ const SimpleMenuPanelButton = new Lang.Class({
       };
     }
 
-    entries.sort(Utils.sortMenuEntries)
+    entries.sort(Utils.sortMenuEntries);
 
     this.first = null;
     for (let i=0; i<size; i++) {
       let add = new PopupMenu.PopupMenuItem(_(this._menuConfig[entries[i].name].display));
 
-      if (this.first == null) {
+      if (this.first === null) {
         this.first = add;
       }
 
@@ -101,7 +106,7 @@ const SimpleMenuPanelButton = new Lang.Class({
   },
 
   _startTerminal: function(terminal, command) {
-    if (terminal == true) {
+    if (terminal === true) {
       Util.spawnCommandLine(this._terminal +" "+ command);
     } else {
       Util.spawnCommandLine(command);
@@ -116,7 +121,7 @@ const SimpleMenuPanelButton = new Lang.Class({
           global.log(command);
         }
         Util.spawn(command);
-        
+
       }
   */
     }

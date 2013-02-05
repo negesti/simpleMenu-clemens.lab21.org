@@ -1,3 +1,7 @@
+/*jshint indent: 2*/
+/*jshint camelcase: true*/
+/*jshint immed: true*/
+/*jshint curly: true*/
 
 const Lang = imports.lang;
 const Gio = imports.gi.Gio;
@@ -69,8 +73,8 @@ Utils.prototype = {
 
     schema = schemaSource.lookup(schema, true);
     if (!schema) {
-        throw new Error('Schema ' + schema + ' could not be found for extension '
-                        + Me.metadata.uuid + '. Please check your installation.');
+        throw new Error('Schema ' + schema + ' could not be found for extension ' +
+                         Me.metadata.uuid + '. Please check your installation.');
     }
 
     this._settingsObject = new Gio.Settings({ settings_schema: schema });
@@ -89,7 +93,7 @@ Utils.prototype = {
 
     this._settings = {
       "simple-menu-entry": JSON.parse(this._settingsObject.get_string("simple-menu-entry"))
-    }
+    };
   },
 
   _addToArray: function(array, value) {
@@ -200,14 +204,12 @@ Utils.prototype = {
       defaultValue = 0;
     }
 
-    return !isNaN(value)
-      ? new Number(value)
-      : defaultValue;
+    return !isNaN(value) ? parseInt(value) : defaultValue;
   },
 
   sortMenuEntries: function(a, b) {
     let ret = a.position - b.position;
-    if (ret != 0) {
+    if (ret !== 0) {
       return ret;
     }
 

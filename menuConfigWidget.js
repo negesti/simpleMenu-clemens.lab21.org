@@ -1,3 +1,8 @@
+/*jshint indent: 2*/
+/*jshint camelcase: true*/
+/*jshint immed: true*/
+/*jshint curly: true*/
+
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 
@@ -23,7 +28,7 @@ const MenuConfigWidget = new GObject.Class({
 
     this._menuConfig = Utils.getParameter(Utils.SIMPLE_MENU_ENTRY);
 
-    let grid = new Gtk.Grid({margin_left: 20, margin_right: 5, column_homogeneous: true, })
+    let grid = new Gtk.Grid({margin_left: 20, margin_right: 5, column_homogeneous: true });
 
     let row = 0;
 
@@ -40,7 +45,7 @@ const MenuConfigWidget = new GObject.Class({
     let cb = this._getComboBox([GObject.TYPE_STRING], [["left"], ["center left"], ["center right"], ["right"]], Utils.getString(Utils.SIMPLE_MENU_POSITION, "right"));
     cb.connect('changed',
       Lang.bind(this, function(combo) {
-        let [success,iter]  = combo.get_active_iter();
+        let [success, iter]  = combo.get_active_iter();
         if (!success) {
           return;
         }
@@ -183,7 +188,7 @@ const MenuConfigWidget = new GObject.Class({
           return;
         }
         let selectedValue = s[1].get_value(s[2], 0);
-        if (this._selectedEntry != null && this._selectedEntry == selectedValue) {
+        if (this._selectedEntry !== null && this._selectedEntry == selectedValue) {
           return;
         }
         this._selectedEntry = selectedValue;
@@ -214,7 +219,7 @@ const MenuConfigWidget = new GObject.Class({
     // toolbar to add/remove entries
     let toolbar = new Gtk.Toolbar({});
     toolbar.set_icon_size(Gtk.IconSize.MENU);
-    toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+    toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
 
     this._removeButton = new Gtk.ToolButton( {stock_id: Gtk.STOCK_REMOVE} );
     this._removeButton.set_sensitive(false);
@@ -260,15 +265,15 @@ const MenuConfigWidget = new GObject.Class({
     addButton.connect("clicked",
       Lang.bind(this, function() {
         let obj = this._addEntry( "Entry " + this._entries.length);
-        this._selectedEntry = obj.name
+        this._selectedEntry = obj.name;
         treeView.get_selection().select_iter(obj.listElement);
-        this._updateEntryContainer(this._createEntryWidget(this._selectedEntry))
+        this._updateEntryContainer(this._createEntryWidget(this._selectedEntry));
       })
     );
 
     this._saveButton = new Gtk.ToolButton({stock_id: Gtk.STOCK_SAVE});
     //this._saveButton.set_use_stock(true);
-    this._saveButton.set_tooltip_text("'Entries' config is not saved automatically.")
+    this._saveButton.set_tooltip_text("'Entries' config is not saved automatically.");
     this._saveButton.connect("clicked", function() {
       Utils.saveSettings();
     });

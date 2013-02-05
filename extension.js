@@ -1,3 +1,7 @@
+/*jshint indent: 2*/
+/*jshint camelcase: true*/
+/*jshint immed: true*/
+/*jshint curly: true*/
 
 const Lang = imports.lang;
 const Main = imports.ui.main;
@@ -13,7 +17,7 @@ const Utils = new Me.imports.utils.Utils();
 
 function SimpleMenu() {
   this._init();
-};
+}
 
 SimpleMenu.prototype = {
   _settingsChangedListeners: [],
@@ -74,7 +78,7 @@ SimpleMenu.prototype = {
     if (Utils.getBoolean(Utils.DISABLE_ANIMATION, false)) {
       Main.wm._shouldAnimate = function(actor) {
         return false;
-      }
+      };
     }
 
     this._addSettingsListeners();
@@ -109,7 +113,7 @@ SimpleMenu.prototype = {
         if (Utils.getBoolean(Utils.DISABLE_ANIMATION, false)) {
           Main.wm._shouldAnimate = function(actor) {
             return false;
-          }
+          };
         } else {
           Main.wm._shouldAnimate = this._oldShouldAnimate;
         }
@@ -164,7 +168,7 @@ SimpleMenu.prototype = {
       } else {
         symbol = Main.panel._statusArea[name];
       }
-      if (symbol != null) {
+      if (symbol !== null) {
         if (hide) {
           symbol.actor.hide();
         } else {
@@ -183,14 +187,14 @@ SimpleMenu.prototype = {
   },
 
   _toggleVolumeButton: function(symbol, hide) {
-    if (this._originalSyncVisibility == null) {
+    if (this._originalSyncVisibility === null) {
       this._originalSyncVisibility = symbol._syncVisibility;
     }
 
     if (hide) {
       symbol._syncVisibility = function() {
         return;
-      }
+      };
       symbol.actor.hide();
     } else {
       symbol._syncVisibility = this._originalSyncVisibility;
@@ -218,7 +222,7 @@ SimpleMenu.prototype = {
 
 function init(meta) {
 
-};
+}
 
 function enable() {
   this.simpleMenu = new SimpleMenu();
@@ -226,5 +230,5 @@ function enable() {
 
 function disable() {
   this.simpleMenu.destroy();
-};
+}
 

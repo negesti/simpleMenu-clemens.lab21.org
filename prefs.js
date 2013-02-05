@@ -1,3 +1,8 @@
+/*jshint indent: 2*/
+/*jshint camelcase: true*/
+/*jshint immed: true*/
+/*jshint curly: true*/
+
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 

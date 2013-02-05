@@ -1,3 +1,7 @@
+/*jshint indent: 2*/
+/*jshint camelcase: true*/
+/*jshint immed: true*/
+/*jshint curly: true*/
 
 const Lang = imports.lang;
 const Main = imports.ui.main;
@@ -45,7 +49,7 @@ HideTopBar.prototype = {
     this._hidden = false;
     this._hideTime = 0;
     if (params.enabled) {
-      this.enable();;
+      this.enable();
     }
   },//_init
 
@@ -109,7 +113,7 @@ HideTopBar.prototype = {
 
     this._hidden = false;
     if (!this._overviewMoved && Main.overview.visible) {
-      if (this._originalSearchEntryPosition == null) {
+      if (this._originalSearchEntryPosition === null) {
         let pos = Main.overview._searchEntry.get_position();
         this._originalSearchEntryPosition = pos;
       }
@@ -122,7 +126,7 @@ HideTopBar.prototype = {
 
      let ticks = event.get_time();
 
-     if (this._hideTime == 0) {
+     if (this._hideTime === 0) {
       this._hideTime = ticks;
       return;
      }
@@ -132,7 +136,7 @@ HideTopBar.prototype = {
       return;
      }
 
-     if (this._panelHideable == true) {
+     if (this._panelHideable === true) {
        this._panelHideable = false;
        this._pinIt(true);
      } else {
@@ -199,7 +203,7 @@ HideTopBar.prototype = {
     this._panelHideable = false;
     this._pinIt(true);
 
-    if (this._originalSearchEntryPosition != null) {
+    if (this._originalSearchEntryPosition !== null) {
       Main.overview._searchEntry.set_position(this._originalSearchEntryPosition[0], this._originalSearchEntryPosition[1]);
     }
 
