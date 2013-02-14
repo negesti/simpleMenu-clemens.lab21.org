@@ -1,0 +1,5 @@
+quotmark
+undef
+unused
+trailing
+maxlen 80

@@ -90,7 +90,10 @@ Utils.prototype = {
     if (this.getBoolean(this.DEV_TOOLS) != devEnabled) {
       this.setParameter(this.DEV_TOOLS, devEnabled);
     }
+    this.reloadMenuSettings();
+  },
 
+  reloadMenuSettings: function() {
     this._settings = {
       "simple-menu-entry": JSON.parse(this._settingsObject.get_string("simple-menu-entry"))
     };
@@ -152,6 +155,11 @@ Utils.prototype = {
       conf = this._settings[path[0]],
       pathLength = path.length - 1;
 
+    if (!conf) {
+      global.log("can not unset");
+      global.log(JSON.stringify(this._settings));
+      global.log(conf);
+    }
     for (let i=1; i < pathLength; i++) {
       conf = conf[path[i]];
     }

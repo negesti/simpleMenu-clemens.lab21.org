@@ -28,7 +28,6 @@ const SimpleMenuPanelButton = new Lang.Class({
 
   _init: function(config) {
     try {
-      this._menuConfig = config.config;
       this._terminal = config.terminal;
 
       this.parent(0.25, "SimpleMenu", false);
@@ -42,8 +41,10 @@ const SimpleMenuPanelButton = new Lang.Class({
       this._icon = new St.Icon(iconParams);
       this.actor.add_actor(this._icon);
 
-      this._dynamicMenu = this._createEntries();
-      this.menu.addMenuItem(this._dynamicMenu);
+      this._dynamicMenu = this._createEntries(config.config);
+      if (this._dynamicMenu) {
+        this.menu.addMenuItem(this._dynamicMenu);
+      }
 
       let sep = new PopupMenu.PopupSeparatorMenuItem();
       this.menu.addMenuItem(sep);
@@ -67,12 +68,25 @@ const SimpleMenuPanelButton = new Lang.Class({
     }
   },
 
+  recreateMenu: function(config) {
+    if (this._dynamicMenu) {
+      this._dynamicMenu.destroy();
+    }
+    this._dynamicMenu = this._createEntries(config);
+    this.menu.addMenuItem(this._dynamicMenu, 0);
+  },
+
   // create the dynamic menu entries defined in simpleMenu.json
-  _createEntries: function() {
+  _createEntries: function(config) {
+    this._menuConfig = config;
     let section = new PopupMenu.PopupMenuSection();
 
     var entries = Object.getOwnPropertyNames(this._menuConfig);
     let size = entries.length;
+
+    if (size == 0) {
+      return false;
+    }
 
     // sort entries by _menuconfig.foobar.position
     for (let i=0; i<size; i++) {
@@ -145,3 +159,5 @@ const SimpleMenuPanelButton = new Lang.Class({
     }
   }
 });
+
+

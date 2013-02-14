@@ -151,6 +151,15 @@ SimpleMenu.prototype = {
       })
     });
 
+    this._settingsChangedListeners.push({
+      name: Utils.SIMPLE_MENU_ENTRY,
+      fn: Lang.bind(this, function() {
+        global.log("recreateMenu");
+        Utils.reloadMenuSettings();
+        this._myPanelButton.recreateMenu(Utils.getParameter(Utils.SIMPLE_MENU_ENTRY, {}));
+      })
+    });
+
 
     for (let i=0; i < this._settingsChangedListeners.length; i++) {
       this._settingsChangedListeners[i].handlerId = Utils.getSettingsObject().connect(

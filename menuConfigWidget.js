@@ -166,7 +166,7 @@ const MenuConfigWidget = new GObject.Class({
   },
 
   _generateMenuEntryList: function() {
-
+    this._entries = [];
     // list all entries
     this._treeModel = new Gtk.ListStore();
     this._treeModel.set_column_types([GObject.TYPE_STRING]);
@@ -227,12 +227,12 @@ const MenuConfigWidget = new GObject.Class({
 
     this._removeButton.connect("clicked",
       Lang.bind(this, function() {
-
+        let delme = this._selectedEntry;
         let dialog = new Gtk.MessageDialog({
           modal: true,
           message_type: Gtk.MessageType.QUESTION,
-          title: "Delete entry '" + this._selectedEntry + "'?",
-          text: "Are you sure to delete the configuration for  '" + this._selectedEntry  + "'?"
+          title: "Delete entry '" + delme + "'?",
+          text: "Are you sure to delete the configuration for  '" + delme  + "'?"
         });
 
         dialog.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL);
@@ -248,10 +248,14 @@ const MenuConfigWidget = new GObject.Class({
               this._entryContainer.get_child().destroy();
             }
             // remove the list entry
-            let entryObject = this._findListEntryByName(this._selectedEntry);
+            let entryObject = this._findListEntryByName(delme);
+            if (entryObject == null) {
+              global.log("can not find listEntry by name " + delme);
+              return;
+            }
             this._treeModel.remove(entryObject.listElement);
             // unset the parameter
-            Utils.unsetParameter(Utils.SIMPLE_MENU_ENTRY + "." + this._selectedEntry);
+            Utils.unsetParameter(Utils.SIMPLE_MENU_ENTRY + "." + delme);
             // remove the entry from _apps array
             this._entries.pop(entryObject);
           })
@@ -346,9 +350,15 @@ const MenuConfigWidget = new GObject.Class({
     grid.attach(new Gtk.Label({ label: "Display name", xalign: 0}), 0, row, 1, 1);
     let displayEntry = new Gtk.Entry({ text: config.display });
     displayEntry.connect("changed", Lang.bind(this, function(input) {
-      Utils.setParameter(configBase + ".display", input.text);
+      let value = input.text;
+      if (value.indexOf(".") != -1) {
+        value = value.replace(/\./g,"-");
+      }
+      Utils.setParameter(configBase + ".display", value);
       let entry = this._findListEntryByName(this._selectedEntry);
-      this._treeModel.set(entry.listElement, [0], [ input.text ]);
+      entry.name = value;
+      this._selectedEntry = value;
+      this._treeModel.set(entry.listElement, [0], [ value ]);
     }));
     grid.attach(displayEntry, 2, row, 2, 1);
     row++;
