@@ -46,15 +46,15 @@ Utils.prototype = {
 
   saveSettings: function() {
     let saveMe = {};
+    global.log("save");
 
     let entries = this._settings["simple-menu-entry"];
 
     let names = Object.getOwnPropertyNames(entries);
     names.sort();
     for (let i=0; i<names.length; i++) {
-      saveMe[entries[names[i]].display] = entries[names[i]];
+      saveMe[names[i]] = entries[names[i]];
     }
-
     this._settingsObject.set_string(this.SIMPLE_MENU_ENTRY, JSON.stringify(saveMe));
   },
 

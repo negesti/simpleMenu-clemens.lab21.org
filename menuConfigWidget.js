@@ -354,7 +354,7 @@ const MenuConfigWidget = new GObject.Class({
       if (value.indexOf(".") != -1) {
         value = value.replace(/\./g,"-");
       }
-      Utils.setParameter(configBase + ".display", value);
+      Utils.setParameter(configBase + ".display", input.text);
       let entry = this._findListEntryByName(this._selectedEntry);
       entry.name = value;
       this._selectedEntry = value;
@@ -396,3 +396,4 @@ const MenuConfigWidget = new GObject.Class({
     return ret;
   }
 });
+
