@@ -40,15 +40,7 @@ const SimpleMenuPanelButton = new Lang.Class({
       }
       this._icon = new St.Icon(iconParams);
       this.actor.add_actor(this._icon);
-
-      this._dynamicMenu = this._createEntries(config.config);
-      if (this._dynamicMenu) {
-        this.menu.addMenuItem(this._dynamicMenu);
-      }
-
-      let sep = new PopupMenu.PopupSeparatorMenuItem();
-      this.menu.addMenuItem(sep);
-
+      
       // add link to settings dialog
       // Thanks to https://github.com/philipphoffmann/gnome3-jenkins-indicator
       this._settingsItem  = new PopupMenu.PopupMenuItem(_("Settings"));
@@ -58,7 +50,16 @@ const SimpleMenuPanelButton = new Lang.Class({
           app.launch(global.display.get_current_time_roundtrip(), ['extension:///' + Me.uuid], -1, null);
         }
       });
+
       this.menu.addMenuItem(this._settingsItem);
+
+      let sep = new PopupMenu.PopupSeparatorMenuItem();
+      this.menu.addMenuItem(sep);
+
+      this._dynamicMenu = this._createEntries(config.config);
+      if (this._dynamicMenu) {
+        this.menu.addMenuItem(this._dynamicMenu);
+      }
 
       Main.panel.menuManager.addMenu(this.menu);
 
