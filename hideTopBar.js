@@ -61,6 +61,7 @@ HideTopBar.prototype = {
     Main.layoutManager.addChrome(Main.layoutManager.panelBox, { affectsStruts: pin });
   },
 
+  // "Inspired" by "hidetopbar@mathieu.bidon.ca
   _hidePanel: function() {
 
     if (Main.overview.visible || !this._panelHideable) {
@@ -88,6 +89,7 @@ HideTopBar.prototype = {
     });
   },//_hidePanel
 
+  // "Inspired" by "hidetopbar@mathieu.bidon.ca
   _showPanel: function() {
     if (!this._hidden) {
       return;
