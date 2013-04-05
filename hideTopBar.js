@@ -23,7 +23,7 @@ HideTopBar.prototype = {
   _overviewMoved: false,
   _originalSearchEntryPosition : null,
   // height of the top bar, required for animations
-  _height: 25,
+  _panelHeight: 25,
 
   // remember all singals connected to overview and main.panel
   _overviewSignals: [],
@@ -45,7 +45,9 @@ HideTopBar.prototype = {
       this.setAnimationTime(params.animationTime);
     }
 
-    this._height = Main.panel.actor.height;
+    this._panelActor = Main.panel.actor;
+    this._panelBox = this._panelActor.get_parent();
+    this._panelHeight = this._panelActor.height;
     this._hidden = false;
     this._hideTime = 0;
     if (params.enabled) {
@@ -64,62 +66,51 @@ HideTopBar.prototype = {
     if (Main.overview.visible || !this._panelHideable) {
       return;
     }
+    this._panelBox.height = 1;
 
-    Tweener.addTween(Main.panel.actor, {
-      height: 1, time: this._animationTime, transition: 'easeOutQuad'
+    Tweener.addTween(this._panelActor, {
+        y:  1 - this._panelHeight,
+        time: this._animationTime,
+        transition: 'easeOutQuad',
+        onComplete: Lang.bind(this, function() {
+            Main.panel._centerBox.hide();
+            Main.panel._rightBox.hide();
+
+            let els = Main.panel._leftBox.get_children();
+            for each(el in els.slice(1)) {
+                if(typeof(el._cotainer) == "undefined") el.hide();
+                else el._container.hide();
+            }
+
+            this._panelActor.set_opacity(0);
+            this._hidden = true;
+        })
     });
-    Tweener.addTween(Main.panel._leftCorner.actor, {
-      y: 0, time: this._animationTime, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._rightCorner.actor, {
-      y: 0, time: this._animationTime, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._leftBox, {
-      opacity: 0, time: this._animationTime-0.1, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._centerBox, {
-      opacity: 0, time: this._animationTime-0.1, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._rightBox, {
-      opacity: 0, time: this._animationTime-0.1, transition: 'easeOutQuad'
-    });
-    this._hidden = true;
   },//_hidePanel
 
   _showPanel: function() {
-
     if (!this._hidden) {
       return;
     }
 
-    Tweener.addTween(Main.panel._leftCorner.actor, {
-      y: this._height -1, time: this._animationTime+0.1, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._rightCorner.actor, {
-      y: this._height -1, time: this._animationTime+0.1, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel.actor, {
-      height: this._height, time: this._animationTime, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._leftBox, {
-      opacity: 255,time: this._animationTime+0.2, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._centerBox, {
-      opacity: 255, time: this._animationTime+0.2, transition: 'easeOutQuad'
-    });
-    Tweener.addTween(Main.panel._rightBox, {
-      opacity: 255, time: this._animationTime+0.2, transition: 'easeOutQuad'
-    });
+    this._panelBox.height = this._panelHeight;
+    this._panelActor.set_opacity(255);
+    Main.panel._centerBox.show();
+    Main.panel._rightBox.show();
 
-    this._hidden = false;
-    if (!this._overviewMoved && Main.overview.visible) {
-      if (this._originalSearchEntryPosition === null) {
-        let pos = Main.overview._searchEntry.get_position();
-        this._originalSearchEntryPosition = pos;
-      }
-      this._overviewMoved = true;
-      Main.overview._searchEntry.set_position(this._originalSearchEntryPosition[0], this._originalSearchEntryPosition[1] + 27);
+    let els = Main.panel._leftBox.get_children();
+    for each(el in els.slice(1)) {
+        if(typeof(el._cotainer) == "undefined") el.show();
+        else el._container.show();
     }
+
+    Tweener.addTween(this._panelActor, {
+        y: 0,
+        time: this._animationTime,
+        transition: 'easeOutQuad',
+    });
+    this._hidden = false;
+
   },//_showPanel
 
   _toggleHideable: function(actor, event) {
