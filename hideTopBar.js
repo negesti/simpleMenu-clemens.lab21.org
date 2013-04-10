@@ -156,7 +156,15 @@ HideTopBar.prototype = {
 
   _hideDelayed: function() {
     this._mouseInside = false;
-    this._hidePanel();
+    Mainloop.timeout_add(this._showDelay,
+      Lang.bind(this,
+        function() {
+          if (!this._mouseInside) {
+            this._hidePanel();
+          }
+        }
+      )
+    );
   },
 
   // Called by extension.js on settings::changed signal
