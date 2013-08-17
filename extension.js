@@ -7,6 +7,7 @@ const Lang = imports.lang;
 const Main = imports.ui.main;
 const Meta = imports.gi.Meta;
 const Overview = imports.ui.overview;
+const Shell = imports.gi.Shell;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -51,16 +52,7 @@ SimpleMenu.prototype = {
       position = 0;
     }
     Main.panel.addToStatusArea("SimpleMenu", this._myPanelButton, position, buttonPosition);
-
-    global.display.add_keybinding(
-      Utils.SIMPLE_MENU_KEY_BINDING,
-      Utils.getSettingsObject(),
-      Meta.KeyBindingFlags.NONE,
-      Lang.bind(this, function(){
-        this._myPanelButton.menu.toggle();
-        this._myPanelButton.focusFirstElement();
-      })
-    );
+    this._addKeyBinding();
 
     if (Utils.getBoolean(Utils.HIDE_A11Y)) {
       this._toggleSymbol("a11y", true);
@@ -83,6 +75,33 @@ SimpleMenu.prototype = {
 
     this._addSettingsListeners();
   }, // _init
+
+  /**
+   * Helper functions to set custom handler for keybindings
+   */
+  _addKeyBinding: function() {
+    let key = Utils.SIMPLE_MENU_KEY_BINDING;
+    let handler = Lang.bind(this, function(){
+      this._myPanelButton.menu.toggle();
+      this._myPanelButton.focusFirstElement();
+    });
+
+    if (Main.wm.addKeybinding && Shell.KeyBindingMode) { // introduced in 3.7.5
+      // Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.MESSAGE_TRAY,
+      Main.wm.addKeybinding(key,
+        Utils.getSettingsObject(), Meta.KeyBindingFlags.NONE,
+        Shell.KeyBindingMode.NORMAL,
+        handler
+      );
+    } else {
+      global.display.add_keybinding(
+        key,
+        Utils.getSettingsObject(),
+        Meta.KeyBindingFlags.NONE,
+        handler
+      );
+    }
+  },	
 
   _addSettingsListeners: function() {
     this._settingsChangedListeners = [{
@@ -222,7 +241,12 @@ SimpleMenu.prototype = {
       }
     }
 
-    global.display.remove_keybinding(Utils.SIMPLE_MENU_KEY_BINDING);
+    if (Main.wm.removeKeybinding) {// introduced in 3.7.2
+      Main.wm.removeKeybinding(Utils.SIMPLE_MENU_KEY_BINDING);
+    } else {
+      global.display.remove_keybinding(Utils.SIMPLE_MENU_KEY_BINDING);
+    }
+    
     this._myPanelButton.destroy();
 
     this._hideTopBar.disable();
