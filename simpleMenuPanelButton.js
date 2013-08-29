@@ -70,11 +70,15 @@ const SimpleMenuPanelButton = new Lang.Class({
   },
 
   recreateMenu: function(config) {
-    if (this._dynamicMenu) {
-      this._dynamicMenu.destroy();
+    try {
+      if (this._dynamicMenu) {
+        this._dynamicMenu.destroy();
+      }
+    } catch (e) { 
+      global.log(e);
     }
     this._dynamicMenu = this._createEntries(config);
-    this.menu.addMenuItem(this._dynamicMenu, 0);
+    this.menu.addMenuItem(this._dynamicMenu);
   },
 
   // create the dynamic menu entries defined in simpleMenu.json

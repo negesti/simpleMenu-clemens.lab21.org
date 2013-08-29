@@ -46,7 +46,6 @@ Utils.prototype = {
 
   saveSettings: function() {
     let saveMe = {};
-    global.log("save");
 
     let entries = this._settings["simple-menu-entry"];
 
