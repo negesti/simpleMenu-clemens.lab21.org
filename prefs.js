@@ -16,24 +16,23 @@ const MenuConfigWidget = Me.imports.menuConfigWidget;
 const SimpleMenuSettingsWidget = new GObject.Class({
   Name: 'SimpleMenu.Prefs.SimpleMenuSettingsWidget',
   GTypeName: 'SimpleMenuSettingsWidget',
-  Extends: Gtk.Grid,
+  Extends: Gtk.Notebook,
+
 
   _init: function(params) {
     this.parent(params);
     this.orientation = Gtk.Orientation.VERTICAL;
     this.expand = true;
 
-    let row = 0;
-    this.attach(this._generateMainSettings(), 0, row, 1, 1);
-    row++
-    this.attach(new Gtk.Separator( { orientation: Gtk.Orientation.HORIZONTAL } ), 0, row, 1, 1);
-    row++;
-    this.attach(this._generateAutohideSettings(), 0, row, 1, 1);
-    row++;
-    this.attach(new Gtk.Separator( { orientation: Gtk.Orientation.HORIZONTAL } ), 0, row, 1, 1);
-    row++;
-    this.attach(new MenuConfigWidget.MenuConfigWidget(), 0, row, 1, 1);
-    row++;
+    this.append_page(this._generateMainSettings(), new Gtk.Label({
+      label: "<b>Main</b>", halign:Gtk.Align.START, margin_left: 4, use_markup: true}));
+
+    this.append_page(this._generateAutohideSettings(), new Gtk.Label({
+      label: "<b>AutoHide TopBar</b>", halign:Gtk.Align.START, margin_left: 4, use_markup: true}));
+
+    this.append_page(new MenuConfigWidget.MenuConfigWidget(), new Gtk.Label({
+      label: "<b>Menu settings</b>", halign:Gtk.Align.START, margin_left: 4, use_markup: true}));
+
   },
 
   _addLabeledSwitch: function(container, row, label, settingsName, labelWidth , buttonWidth) {
@@ -63,6 +62,8 @@ const SimpleMenuSettingsWidget = new GObject.Class({
     let grid = new Gtk.Grid({margin_left: 20, column_homogeneous: true, })
 
     let row = 0;
+    this._addLabeledSwitch(grid, row, "Avoid oveview", Utils.AVOID_OVERVIEW);
+    row++
     this._addLabeledSwitch(grid, row, "Enable development tools (LoogkinGlass, shell reload..)", Utils.DEV_TOOLS);
     row++;
     this._addLabeledSwitch(grid, row, "Disable animation", Utils.DISABLE_ANIMATION);
@@ -74,11 +75,7 @@ const SimpleMenuSettingsWidget = new GObject.Class({
     this._addLabeledSwitch(grid, row, "Hide A11y icon", Utils.HIDE_A11Y);
     row++;
 
-    let ret = new Gtk.Expander();
-    ret.set_label("<b>Main Settings</b>");
-    ret.set_use_markup(true);
-    ret.add(grid);
-    return ret;
+    return grid;
   },
 
   _generateAutohideSettings: function() {
@@ -122,11 +119,7 @@ const SimpleMenuSettingsWidget = new GObject.Class({
     grid.attach(animationTime, 4, row, 2, 1);
     row++;
 
-    let ret = new Gtk.Expander();
-    ret.set_label("<b>Auto-Hide TopBar</b>");
-    ret.set_use_markup(true);
-    ret.add(grid);
-    return ret;
+    return grid;
   }
 });
 

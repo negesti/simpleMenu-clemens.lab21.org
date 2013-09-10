@@ -15,29 +15,26 @@ const Utils = new Me.imports.utils.Utils();
 const MenuConfigWidget = new GObject.Class({
   Name: 'SimpleMenu.Prefs.MenuConfigWidget',
   GTypeName: 'SimpleMenuMenuConfigWidget',
-  Extends: Gtk.Expander,
+  Extends: Gtk.Grid,
 
   _menuConfig: {},
   _entries: [],
   _selectedEntry: null,
 
   _init: function(params) {
-    this.parent(params);
-    this.set_label("<b>Menu settings</b>");
-    this.set_use_markup(true);
+    this.parent({margin_left: 20, margin_right: 5, column_homogeneous: true });
+
 
     this._menuConfig = Utils.getParameter(Utils.SIMPLE_MENU_ENTRY);
-
-    let grid = new Gtk.Grid({margin_left: 20, margin_right: 5, column_homogeneous: true });
 
     let row = 0;
 
     // Keybinding
-    grid.attach(this._getKeybindingEntry(), 0, row, 5, 1);
+    this.attach(this._getKeybindingEntry(), 0, row, 5, 1);
     row++;
 
     // position combo
-    grid.attach(new Gtk.Label({
+    this.attach(new Gtk.Label({
       halign: Gtk.Align.START,
       label: "PanelButton position",
     }), 0, row, 2, 1);
@@ -52,11 +49,11 @@ const MenuConfigWidget = new GObject.Class({
         Utils.setParameter(Utils.SIMPLE_MENU_POSITION, combo.get_model().get_value(iter, 0));
       })
     );
-    grid.attach(cb, 3, row, 2, 1);
+    this.attach(cb, 3, row, 2, 1);
     row++;
 
     // terminal to execute
-    grid.attach(new Gtk.Label({
+    this.attach(new Gtk.Label({
       halign: Gtk.Align.START,
       label: "Terminal command",
     }), 0, row, 2, 1);
@@ -67,14 +64,12 @@ const MenuConfigWidget = new GObject.Class({
         Utils.setParameter(Utils.SIMPLE_MENU_TERMINAL, input.text);
       })
     );
-    grid.attach(terminalName, 3, row, 2, 1);
+    this.attach(terminalName, 3, row, 2, 1);
     row++;
 
     // menu entries
-    grid.attach(this._generateMenuEntryList(), 0, row, 5, 1);
+    this.attach(this._generateMenuEntryList(), 0, row, 5, 1);
     row++;
-
-    this.add(grid);
   },
 
 

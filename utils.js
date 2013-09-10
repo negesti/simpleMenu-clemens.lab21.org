@@ -17,6 +17,8 @@ Utils.prototype = {
   _settingsObject: { },
   _settings: "",
 
+  AVOID_OVERVIEW: 'avoid-overview',
+
   HIDE_A11Y: "hide-a11y",
   HIDE_VOLUME: "hide-volume",
   HIDE_BLUETOOTH: "hide-bluetooth",

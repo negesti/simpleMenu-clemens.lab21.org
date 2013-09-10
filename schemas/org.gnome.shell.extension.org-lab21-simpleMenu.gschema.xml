@@ -1,6 +1,11 @@
 <schemalist>
   <schema id="org.gnome.shell.extensions.org-lab21-simpleMenu" path="/org/gnome/shell/extensions/org-lab21-simpleMenu/">
     <!-- hide panel icons -->
+
+    <key type="i" name="avoid-overview">
+      <default>0</default>
+      <summary>Don't open the overview if current workspace has no windows</summary>
+    </key>
     <key type="i" name="hide-a11y">
       <default>0</default>
       <summary>Hide the A11y icon</summary>

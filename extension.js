@@ -16,6 +16,10 @@ const SimpleMenuPanelButton = Me.imports.simpleMenuPanelButton;
 
 const Utils = new Me.imports.utils.Utils();
 
+let _defaultCheckWorkspacesFunction;
+let _defaultShowFunction;
+let _checkingWorkspaces;
+
 function SimpleMenu() {
   this._init();
 }
@@ -73,8 +77,35 @@ SimpleMenu.prototype = {
       };
     }
 
+    _defaultCheckWorkspacesFunction = Main._checkWorkspaces;
+    _defaultShowFunction = Main.overview.show;
+    _checkingWorkspaces=false;
+
+    if (Utils.getBoolean(Utils.AVOID_OVERVIEW, false)) {
+      this._enableAvoidOverview();
+    }
+
     this._addSettingsListeners();
   }, // _init
+
+  _disableAvoidOverview: function() {
+    Main._checkWorkspaces = _defaultCheckWorkspacesFunction;
+    Main.overview.show = _defaultShowFunction;
+  },
+
+  _enableAvoidOverview: function() {
+    Main.overview.show=function() {
+        if(_checkingWorkspaces==false) {
+            _defaultShowFunction.call(Main.overview);
+        }
+    };
+
+    Main._checkWorkspaces = function() {
+        _checkingWorkspaces = true;
+        _defaultCheckWorkspacesFunction.call(Main);
+        _checkingWorkspaces = false;
+    };
+  },
 
   /**
    * Helper functions to set custom handler for keybindings
@@ -101,7 +132,7 @@ SimpleMenu.prototype = {
         handler
       );
     }
-  },	
+  },
 
   _addSettingsListeners: function() {
     this._settingsChangedListeners = [{
@@ -125,6 +156,17 @@ SimpleMenu.prototype = {
           global.settings.set_boolean('development-tools', Utils.getBoolean(Utils.DEV_TOOLS));
         })
     }];
+
+    this._settingsChangedListeners.push({
+      name: Utils.AVOID_OVERVIEW,
+      fn: Lang.bind(this, function() {
+        if (Utils.getBoolean(Utils.AVOID_OVERVIEW, false)) {
+          this._enableAvoidOverview();
+        } else {
+          this._disableAvoidOverview();
+        }
+      })
+    });
 
     this._settingsChangedListeners.push({
       name: Utils.DISABLE_ANIMATION,
@@ -173,7 +215,6 @@ SimpleMenu.prototype = {
     this._settingsChangedListeners.push({
       name: Utils.SIMPLE_MENU_ENTRY,
       fn: Lang.bind(this, function() {
-        global.log("recreateMenu");
         Utils.reloadMenuSettings();
         this._myPanelButton.recreateMenu(Utils.getParameter(Utils.SIMPLE_MENU_ENTRY, {}));
       })
@@ -246,10 +287,11 @@ SimpleMenu.prototype = {
     } else {
       global.display.remove_keybinding(Utils.SIMPLE_MENU_KEY_BINDING);
     }
-    
+
     this._myPanelButton.destroy();
 
     this._hideTopBar.disable();
+    this._disableAvoidOverview();
   } // destroy
 }; // SimpleMenu
 
