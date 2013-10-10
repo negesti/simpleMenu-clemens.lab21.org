@@ -40,7 +40,7 @@ const SimpleMenuPanelButton = new Lang.Class({
       }
       this._icon = new St.Icon(iconParams);
       this.actor.add_actor(this._icon);
-      
+
       // add link to settings dialog
       // Thanks to https://github.com/philipphoffmann/gnome3-jenkins-indicator
       this._settingsItem  = new PopupMenu.PopupMenuItem(_("Settings"));
@@ -52,6 +52,17 @@ const SimpleMenuPanelButton = new Lang.Class({
       });
 
       this.menu.addMenuItem(this._settingsItem);
+
+      this.disableMouseOverButton = new PopupMenu.PopupSwitchMenuItem("Disable mouseover", Utils.getBoolean(Utils.DISABLE_MOUSEOVER_SHOW, false));
+      this.disableMouseOverButton.connect('toggled',
+        Lang.bind(this, function(item, event) {
+          Utils.setParameter(Utils.DISABLE_MOUSEOVER_SHOW, item.state);
+        })
+      );
+
+      this.menu.addMenuItem(this.disableMouseOverButton);
+
+      this.first = this.disableMouseOverButton;
 
       let sep = new PopupMenu.PopupSeparatorMenuItem();
       this.menu.addMenuItem(sep);
@@ -74,7 +85,7 @@ const SimpleMenuPanelButton = new Lang.Class({
       if (this._dynamicMenu) {
         this._dynamicMenu.destroy();
       }
-    } catch (e) { 
+    } catch (e) {
       global.log(e);
     }
     this._dynamicMenu = this._createEntries(config);
@@ -103,13 +114,8 @@ const SimpleMenuPanelButton = new Lang.Class({
 
     entries.sort(Utils.sortMenuEntries);
 
-    this.first = null;
     for (let i=0; i<size; i++) {
       let add = new PopupMenu.PopupMenuItem(_(this._menuConfig[entries[i].name].display));
-
-      if (this.first === null) {
-        this.first = add;
-      }
 
       let term = this._menuConfig[entries[i].name].terminal;
       let com = this._menuConfig[entries[i].name].command;

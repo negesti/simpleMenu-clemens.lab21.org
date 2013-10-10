@@ -142,6 +142,11 @@ HideTopBar.prototype = {
   },//_toggleHideable
 
   _showDelayed: function() {
+
+    if (Utils.getBoolean(Utils.DISABLE_MOUSEOVER_SHOW, false)) {
+      return;
+    }
+
     this._mouseInside = true;
     Mainloop.timeout_add(this._showDelay,
       Lang.bind(this,

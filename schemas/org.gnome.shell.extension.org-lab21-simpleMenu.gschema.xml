@@ -36,6 +36,10 @@
       <default>0</default>
       <summary>Hide the Gnome-shell top bar</summary>
     </key>
+    <key type="i" name="hide-top-disable-mouseover">
+      <default>0</default>
+      <summary>Disable the mosueover feature to show the TopPanel</summary>
+    </key>
     <key type="i" name="hide-top-time-delta">
       <default>1</default>
       <summary>Pin top panel double click timeout</summary>

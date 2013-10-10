@@ -29,6 +29,7 @@ Utils.prototype = {
   HIDE_TOP_TIME_DELTA: 'hide-top-time-delta',
   HIDE_TOP_SHOW_DELAY: 'hide-top-show-delay',
   HIDE_TOP_ANIMATION_TIME: 'hide-top-animation-time',
+  DISABLE_MOUSEOVER_SHOW: 'hide-top-disable-mouseover',
 
   SIMPLE_MENU_POSITION: 'simple-menu-position',
   SIMPLE_MENU_TERMINAL: 'simple-menu-terminal',
