@@ -78,7 +78,7 @@ HideTopBar.prototype = {
             Main.panel._rightBox.hide();
 
             let els = Main.panel._leftBox.get_children();
-            for each(el in els.slice(1)) {
+            for each(let el in els.slice(1)) {
                 if(typeof(el._cotainer) == "undefined") el.hide();
                 else el._container.hide();
             }

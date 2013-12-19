@@ -62,11 +62,11 @@ SimpleMenu.prototype = {
       this._toggleSymbol("a11y", true);
     }
 
-    if(Utils.getBoolean(Utils.HIDE_BLUETOOTH)) {
+    if (Utils.getBoolean(Utils.HIDE_BLUETOOTH)) {
       this._toggleSymbol("bluetooth", true);
     }
 
-    if(Utils.getBoolean(Utils.HIDE_VOLUME)) {
+    if (Utils.getBoolean(Utils.HIDE_VOLUME)) {
       this._toggleSymbol("volume", true);
     }
 
@@ -237,7 +237,7 @@ SimpleMenu.prototype = {
       } else {
         symbol = Main.panel._statusArea[name];
       }
-      if (symbol !== null) {
+      if ((typeof symbol) != "undefined" && symbol !== null) {
         if (hide) {
           symbol.actor.hide();
         } else {
@@ -251,7 +251,7 @@ SimpleMenu.prototype = {
         global.log("Error: Can not resolve symbol by name " + name );
       }
     } catch(e) {
-      global.log("Error hidding " + name +"  " +e+ " " + " "  +e.Message);
+      global.log("Error hidding '" + name +"'  " + e + " " + " "  +e.Message);
     }
   },
 

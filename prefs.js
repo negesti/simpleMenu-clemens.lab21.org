@@ -88,7 +88,7 @@ const SimpleMenuSettingsWidget = new GObject.Class({
       halign: Gtk.Align.START,  label: "Double-click timeout [sec]"
     }), 0, row, 3, 1);
 
-    let timeDelta = new Gtk.HScale.new_with_range( 1, 10, 1 );
+    let timeDelta = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 1, 10, 1 );
     timeDelta.set_value(Utils.getNumber(Utils.HIDE_TOP_TIME_DELTA, 1));
     timeDelta.connect("value_changed", Lang.bind(timeDelta, function() {
       Utils.setParameter(Utils.HIDE_TOP_TIME_DELTA, this.get_value());
@@ -100,7 +100,7 @@ const SimpleMenuSettingsWidget = new GObject.Class({
       halign: Gtk.Align.START,  label: "Mouse over show time [100ms]"
     }), 0, row, 3, 1);
 
-    let showDelay = new Gtk.HScale.new_with_range( 1, 10, 1 );
+    let showDelay = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 1, 10, 1 );
     showDelay.set_value(Utils.getNumber(Utils.HIDE_TOP_SHOW_DELAY, 3));
     showDelay.connect("value_changed", Lang.bind(showDelay, function() {
       Utils.setParameter(Utils.HIDE_TOP_SHOW_DELAY, this.get_value());
@@ -111,7 +111,7 @@ const SimpleMenuSettingsWidget = new GObject.Class({
     grid.attach( new Gtk.Label({
       halign: Gtk.Align.START,  label: "Animation time [strange factor]"
     }), 0, row, 3, 1);
-    let animationTime = new Gtk.HScale.new_with_range( 1, 10, 1 );
+    let animationTime = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 1, 10, 1 );
     animationTime.set_value(Utils.getNumber(Utils.HIDE_TOP_ANIMATION_TIME, 4));
     animationTime.connect("value_changed", Lang.bind(animationTime, function() {
       Utils.setParameter(Utils.HIDE_TOP_ANIMATION_TIME, this.get_value());
