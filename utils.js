@@ -55,7 +55,8 @@ Utils.prototype = {
     let names = Object.getOwnPropertyNames(entries);
     names.sort();
     for (let i=0; i<names.length; i++) {
-      saveMe[names[i]] = entries[names[i]];
+      let name = entries[names[i]].display.replace(/\./g,"-");
+      saveMe[name] = entries[names[i]];
     }
     this._settingsObject.set_string(this.SIMPLE_MENU_ENTRY, JSON.stringify(saveMe));
   },
