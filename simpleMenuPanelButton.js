@@ -47,7 +47,7 @@ const SimpleMenuPanelButton = new Lang.Class({
       this._settingsItem.connect("activate", function(){
         let app = Shell.AppSystem.get_default().lookup_app("gnome-shell-extension-prefs.desktop");
         if ( app!==null ) {
-          app.launch(global.display.get_current_time_roundtrip(), ['extension:///' + Me.uuid], -1, null);
+          app.launch(global.display.get_current_time_roundtrip(), -1, null);
         }
       });
 

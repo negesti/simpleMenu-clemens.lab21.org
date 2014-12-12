@@ -23,6 +23,7 @@ const SimpleMenuSettingsWidget = new GObject.Class({
     this.parent(params);
     this.orientation = Gtk.Orientation.VERTICAL;
     this.expand = true;
+    this.tab_pos = Gtk.PositionType.LEFT;
 
     this.append_page(this._generateMainSettings(), new Gtk.Label({
       label: "<b>Main</b>", halign:Gtk.Align.START, margin_left: 4, use_markup: true}));
